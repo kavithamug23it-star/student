@@ -3,22 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DOM Manipulation & JS Modules - Full Example</title>
+<title>Advanced Student Registration</title>
 <style>
-    /* === Basic Styling === */
+    /* CSS Variables for theme colors & fonts */
+    :root {
+        --primary-color: #4CAF50;
+        --secondary-color: #45a049;
+        --bg-color: #eef2f7;
+        --text-color: #333;
+        --font-family: 'Arial', sans-serif;
+    }
+
     body {
-        font-family: Arial, sans-serif;
-        background-color: #eef2f7;
+        font-family: var(--font-family);
+        background-color: var(--bg-color);
         margin: 0;
         padding: 0;
     }
 
+    /* Heading animation */
     h2 {
         text-align: center;
-        color: #333;
+        color: var(--text-color);
+        position: relative;
+        animation: fadeIn 1.5s ease-in-out;
     }
 
-    /* Button styling */
+    /* Decorative pseudo-elements */
+    h2::before, h2::after {
+        content: "";
+        position: absolute;
+        height: 3px;
+        width: 50px;
+        background-color: var(--primary-color);
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    h2::before { left: 25%; }
+    h2::after { right: 25%; }
+
+    /* Form container */
+    form {
+        background: white;
+        max-width: 500px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        animation: slideUp 1s ease-in-out;
+    }
+
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    input, select, textarea {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+
+    /* Smooth hover effect on input */
+    input:hover, select:hover, textarea:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+    }
+
+    /* Animated submit button */
+    input[type="submit"] {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 10px;
+        position: relative;
+        overflow: hidden;
+        transition: background-color 0.3s ease;
+    }
+    input[type="submit"]:hover {
+        background-color: var(--secondary-color);
+    }
+
+    /* Animated gradient effect */
+    input[type="submit"]::after {
+        content: "";
+        position: absolute;
+        left: -100%;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.5s ease;
+    }
+    input[type="submit"]:hover::after {
+        left: 0;
+    }
+
+    /* Click me & Create Card button */
     .click-me {
         background-color: dodgerblue;
         color: white;
@@ -26,171 +114,167 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        transition: transform 0.2s;
     }
     .click-me:hover {
         transform: scale(1.1);
     }
 
-    /* Card containers */
-    #cardContainer, #profileContainer {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 20px;
+    /* Responsive layout */
+    @media (max-width: 600px) {
+        form {
+            width: 90%;
+        }
+        h2::before, h2::after {
+            display: none;
+        }
     }
 
-    /* Card styles */
-    .card, .profile-card {
-        background: lightblue;
-        padding: 10px;
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+        from { transform: translateY(50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Card Styles */
+    .card {
+        background: white;
         border-radius: 8px;
-        width: 150px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        width: 200px;
         text-align: center;
+        font-family: var(--font-family);
+        transition: transform 0.2s;
     }
-
-    /* Delete/Remove buttons */
-    .delete-btn, .remove-btn {
-        background: red;
+    .card:hover {
+        transform: scale(1.05);
+    }
+    .card button {
+        background-color: crimson;
         color: white;
         border: none;
-        padding: 5px;
-        margin-top: 8px;
+        padding: 5px 10px;
+        margin-top: 10px;
         cursor: pointer;
+        border-radius: 4px;
+    }
+    .card button:hover {
+        background-color: darkred;
     }
 </style>
 </head>
 <body>
 
-<!-- Heading -->
-<h2 id="mainHeading">Student Registration - DOM & Modules Demo</h2>
+<h2>Student Registration</h2>
 
-<!-- === Mini-Activity: Create Card === -->
+<form id="registrationForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name">
+
+    <label for="email">Email:</label>
+    <input type="email" id="email">
+
+    <label for="department">Department:</label>
+    <select id="department">
+        <option value="">-- Select Department --</option>
+        <option value="CSE">Computer Science</option>
+        <option value="ECE">Electronics</option>
+        <option value="MECH">Mechanical</option>
+        <option value="CIVIL">Civil</option>
+    </select>
+
+    <label for="year">Year:</label>
+    <select id="year">
+        <option value="">-- Select Year --</option>
+        <option value="1">1st Year</option>
+        <option value="2">2nd Year</option>
+        <option value="3">3rd Year</option>
+        <option value="4">4th Year</option>
+    </select>
+
+    <label for="project">Project Title:</label>
+    <textarea id="project" rows="2"></textarea>
+
+    <input type="submit" value="Register">
+</form>
+
+<!-- Color Change Button -->
 <div style="text-align:center; margin: 20px;">
-    <button id="createCardBtn" class="click-me">Create Card</button>
+    <button class="click-me" id="colorBtn">Click Me</button>
 </div>
-<!-- Container where cards will be added -->
-<div id="cardContainer"></div>
 
-<!-- === Practical Activity: Add Profile === -->
+<!-- Create Card Button -->
 <div style="text-align:center; margin: 20px;">
-    <button id="addProfileBtn" class="click-me">Add Profile</button>
+    <button class="click-me" id="createCardBtn">Create Card</button>
 </div>
-<!-- Container where profile cards will be added -->
-<div id="profileContainer"></div>
 
-<!-- Importing main JavaScript (ES module syntax) -->
-<script type="module">
+<!-- Card Container -->
+<div id="cardContainer" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+</div>
 
-/* 
-    ======== mathUtils.js (Module) ========
-    This file will export named and default functions
-*/
-export function add(a, b) {
-    return a + b;
-}
-export function multiply(a, b) {
-    return a * b;
-}
-export default function greet(name) {
-    return Hello, ${name}!;
-}
+<script>
+    // Welcome alert
+    window.onload = function() {
+        alert("Welcome to the Student Registration Page!");
+    }
 
-</script>
+    // Form validation
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+        let name = document.getElementById("name").value.trim();
+        let email = document.getElementById("email").value.trim();
+        let department = document.getElementById("department").value;
+        let year = document.getElementById("year").value;
+        let project = document.getElementById("project").value.trim();
 
-<script type="module">
-
-/* 
-    ======== cardModule.js (Module) ========
-    This file will handle creating profile cards dynamically
-*/
-export function createProfileCard(name, role) {
-    // Create a div for profile card
-    const card = document.createElement("div");
-    card.className = "profile-card";
-
-    // Add inner HTML with name, role, and remove button
-    card.innerHTML = `
-        <h3>${name}</h3>
-        <p>${role}</p>
-        <button class="remove-btn">Remove</button>
-    `;
-
-    // Remove button event listener
-    card.querySelector(".remove-btn").addEventListener("click", () => {
-        card.remove();
-    });
-
-    return card;
-}
-
-</script>
-
-<script type="module">
-/* 
-    ======== main.js ========
-    This file imports from mathUtils.js and cardModule.js
-    and handles DOM manipulation logic
-*/
-
-    // Importing from "mathUtils" module
-    import greet, { add, multiply } from './mathUtils.js';
-
-    // Importing from "cardModule" module
-    import { createProfileCard } from './cardModule.js';
-
-    // Log greetings and math results to console
-    console.log(greet("Kavitha"));
-    console.log("Add:", add(5, 3));
-    console.log("Multiply:", multiply(4, 2));
-
-    // === Selecting elements using DOM methods ===
-    const heading = document.getElementById("mainHeading");
-    const createCardBtn = document.querySelector("#createCardBtn");
-    const cardContainer = document.querySelector("#cardContainer");
-
-    // === Mini-Activity: Create Card ===
-    createCardBtn.addEventListener("click", () => {
-        // Create new card div
-        const card = document.createElement("div");
-        card.className = "card";
-        card.textContent = "This is a card"; // Setting text
-
-        // Create delete button
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.className = "delete-btn";
-
-        // Add delete functionality
-        deleteBtn.addEventListener("click", () => {
-            card.remove();
-        });
-
-        // Append delete button to card
-        card.appendChild(deleteBtn);
-
-        // Append card to container
-        cardContainer.appendChild(card);
-
-        // Change heading style and text
-        heading.textContent = "New Card Added!";
-        heading.style.color = "green";
-    });
-
-    // === Practical Activity: Add Profile ===
-    const addProfileBtn = document.querySelector("#addProfileBtn");
-    const profileContainer = document.querySelector("#profileContainer");
-
-    addProfileBtn.addEventListener("click", () => {
-        const name = prompt("Enter Name:");
-        const role = prompt("Enter Role:");
-
-        if (name && role) {
-            const profileCard = createProfileCard(name, role);
-            profileContainer.appendChild(profileCard);
+        if (!name || !email || !department || !year || !project) {
+            alert("Please fill in all fields before submitting.");
+            event.preventDefault();
         }
     });
 
+    // Mini-Activity: Button changes form background color and heading text
+    const colors = ["#f4cccc", "#c9daf8", "#d9ead3", "#fff2cc", "#fce5cd"];
+    let index = 0;
+
+    document.getElementById("colorBtn").addEventListener("click", function() {
+        document.querySelector("form").style.backgroundColor = colors[index];
+        document.querySelector("h2").textContent = "Color Changed!";
+        index = (index + 1) % colors.length;
+    });
+
+    // Create Card Activity
+    document.getElementById("createCardBtn").addEventListener("click", function() {
+        let name = prompt("Enter name:");
+        let role = prompt("Enter role:");
+
+        if (name && role) {
+            // Create card
+            let card = document.createElement("div");
+            card.classList.add("card");
+
+            // Card content
+            card.innerHTML = `
+                <h3>${name}</h3>
+                <p>${role}</p>
+                <button class="deleteBtn">Delete</button>
+            `;
+
+            // Add delete functionality
+            card.querySelector(".deleteBtn").addEventListener("click", function() {
+                card.remove();
+            });
+
+            // Append to container
+            document.getElementById("cardContainer").appendChild(card);
+        } else {
+            alert("Both name and role are required!");
+        }
+    });
 </script>
 
 </body>
